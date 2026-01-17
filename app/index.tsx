@@ -1,15 +1,17 @@
-import { Link, Stack } from "expo-router";
-import { MoonStarIcon, StarIcon, SunIcon } from "lucide-react-native";
+import {
+  ActionProvider,
+  DataProvider,
+  Renderer,
+  VisibilityProvider,
+} from "@json-render/react";
+import { Stack } from "expo-router";
+import { MoonStarIcon, SunIcon } from "lucide-react-native";
 import { useColorScheme } from "nativewind";
-import { Image, type ImageStyle, View } from "react-native";
+import { View } from "react-native";
+import { componentRegistry } from "@/components/JSONRender";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
-import { Text } from "@/components/ui/text";
-
-const LOGO = {
-  light: require("@/assets/images/react-native-reusables-light.png"),
-  dark: require("@/assets/images/react-native-reusables-dark.png"),
-};
+import { catalog } from "@/lib/catalog";
 
 const SCREEN_OPTIONS = {
   title: "React Native Reusables",
@@ -17,47 +19,40 @@ const SCREEN_OPTIONS = {
   headerRight: () => <ThemeToggle />,
 };
 
-const IMAGE_STYLE: ImageStyle = {
-  height: 76,
-  width: 76,
-};
-
 export default function Screen() {
-  const { colorScheme } = useColorScheme();
+  const tree = catalog.treeSchema.parse({
+    root: "card",
+    elements: {
+      card: {
+        key: "card",
+        type: "Card",
+        props: {
+          title: "Card Title",
+          description: "This is a card component",
+        },
+        children: ["content"],
+      },
+      content: {
+        key: "content",
+        type: "Text",
+        props: {
+          content: "Add your content here",
+        },
+      },
+    },
+  });
 
   return (
     <>
       <Stack.Screen options={SCREEN_OPTIONS} />
       <View className="flex-1 items-center justify-center gap-8 p-4">
-        <Image
-          resizeMode="contain"
-          source={LOGO[colorScheme ?? "light"]}
-          style={IMAGE_STYLE}
-        />
-        <View className="gap-2 p-4">
-          <Text className="font-mono ios:text-foreground text-muted-foreground text-sm">
-            1. Edit <Text variant="code">app/index.tsx</Text> to get started.
-          </Text>
-          <Text className="font-mono ios:text-foreground text-muted-foreground text-sm">
-            2. Save to see your changes instantly.
-          </Text>
-        </View>
-        <View className="flex-row gap-2">
-          <Link asChild href="https://reactnativereusables.com">
-            <Button>
-              <Text>Browse the Docs</Text>
-            </Button>
-          </Link>
-          <Link
-            asChild
-            href="https://github.com/founded-labs/react-native-reusables"
-          >
-            <Button variant="ghost">
-              <Text>Star the Repo</Text>
-              <Icon as={StarIcon} />
-            </Button>
-          </Link>
-        </View>
+        <DataProvider>
+          <VisibilityProvider>
+            <ActionProvider>
+              <Renderer registry={componentRegistry} tree={tree} />
+            </ActionProvider>
+          </VisibilityProvider>
+        </DataProvider>
       </View>
     </>
   );
