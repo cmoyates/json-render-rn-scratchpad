@@ -14,12 +14,17 @@ import { Icon } from "@/components/ui/icon";
 import { catalog } from "@/lib/catalog";
 
 const SCREEN_OPTIONS = {
-  title: "React Native Reusables",
+  title: "JSON Render Demo",
   headerTransparent: true,
   headerRight: () => <ThemeToggle />,
 };
 
 export default function Screen() {
+  const initialData = {
+    user: { name: "John Doe" },
+    form: { email: "john.doe@example.com", message: "Hello, world!" },
+  };
+
   const tree = catalog.treeSchema.parse({
     root: "card",
     elements: {
@@ -27,8 +32,8 @@ export default function Screen() {
         key: "card",
         type: "Card",
         props: {
-          title: "Card Title",
-          description: "This is a card component",
+          titlePath: "user/name",
+          descriptionPath: "form/email",
         },
         children: ["content"],
       },
@@ -36,7 +41,7 @@ export default function Screen() {
         key: "content",
         type: "Text",
         props: {
-          content: "Add your content here",
+          contentPath: "form/message",
         },
       },
     },
@@ -46,7 +51,7 @@ export default function Screen() {
     <>
       <Stack.Screen options={SCREEN_OPTIONS} />
       <View className="flex-1 items-center justify-center gap-8 p-4">
-        <DataProvider>
+        <DataProvider initialData={initialData}>
           <VisibilityProvider>
             <ActionProvider>
               <Renderer registry={componentRegistry} tree={tree} />

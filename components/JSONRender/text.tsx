@@ -1,11 +1,13 @@
-import type { ComponentRenderProps } from "@json-render/react";
+import { type ComponentRenderProps, useDataValue } from "@json-render/react";
 import { Text as UIText } from "@/components/ui/text";
 
 interface Props {
-  content: string;
+  contentPath: string;
 }
 
 export const Text = ({ element }: ComponentRenderProps) => {
-  const { content } = element.props as unknown as Props;
-  return <UIText>{content}</UIText>;
+  const { contentPath } = element.props as unknown as Props;
+  const content = useDataValue<string>(contentPath);
+
+  return <UIText>{content ?? ""}</UIText>;
 };

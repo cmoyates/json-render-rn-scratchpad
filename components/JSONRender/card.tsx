@@ -1,4 +1,4 @@
-import type { ComponentRenderProps } from "@json-render/react";
+import { type ComponentRenderProps, useDataValue } from "@json-render/react";
 import {
   Card as UICard,
   CardContent as UICardContent,
@@ -8,12 +8,14 @@ import {
 } from "@/components/ui/card";
 
 interface Props {
-  title: string;
-  description: string;
+  titlePath: string;
+  descriptionPath: string;
 }
 
 export const Card = ({ element, children }: ComponentRenderProps) => {
-  const { title, description } = element.props as unknown as Props;
+  const { titlePath, descriptionPath } = element.props as unknown as Props;
+  const title = useDataValue<string>(titlePath);
+  const description = useDataValue<string>(descriptionPath);
   return (
     <UICard>
       <UICardHeader>
